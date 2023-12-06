@@ -1,6 +1,6 @@
 env/
 db.sqlite3
-thumbs/
+thumbs/*
 **/__pycache__/
 .DS_Store
 **/staticfiles/

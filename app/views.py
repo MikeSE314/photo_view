@@ -7,8 +7,7 @@ from datetime import datetime
 from PIL import Image
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 
 from .models import Picture
@@ -17,7 +16,12 @@ from .models import Picture
 EXIF_DATE = 36867
 
 
+def is_member(user):
+    return user.groups.filter(name='member').exists()
+
+
 @login_required
+@user_passes_test(is_member, login_url='/forbidden', redirect_field_name=None)
 def index(req):
     pics = Picture.objects.order_by('-date')
     days = {}
@@ -30,11 +34,16 @@ def index(req):
     return render(req, "app/index.html", {"days": days})
 
 
+def forbidden(req):
+    return render(req, "app/forbidden.html", status=403)
+
+
 def login(req):
     return render(req, "app/login.html")
 
 
 @login_required
+@user_passes_test(is_member, login_url='/forbidden', redirect_field_name=None)
 def catalog(req):
     # do stuff
     for photo_dir in settings.PHOTO_DIRS:

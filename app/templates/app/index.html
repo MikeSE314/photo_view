@@ -11,7 +11,9 @@
 <div class="container">
   <div>
     Hey {{ user.username }}!
+    {% if user.is_staff %}
     <a href="{% url 'admin:index' %}">Admin</a> |
+    {% endif %}
     <a href="{% url 'account_logout' %}">Log out</a>
   </div>
 
