@@ -29,8 +29,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    '192.168.16.180',
-    '10.1.159.40',
+    'gracious-heisenberg.local',
+    '10.1.159.52',
 ]
 
 
@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'app.apps.AppConfig',  # my app
     'sslserver',  # https
-    "django_bootstrap5",  # bootstrap
 ]
 
 MIDDLEWARE = [
@@ -148,7 +147,8 @@ STATIC_ROOT = PROJECT_ROOT / 'staticfiles'
 STATIC_URL = 'static/'
 
 PHOTO_DIRS = [
-    Path(os.path.expanduser('~/Downloads/Photos-001')),
+    # Path(os.path.expanduser('~/Downloads/Photos-001')),
+    Path('/mnt/V/photoprism/originals/'),
 ]
 
 THUMB_DIR = BASE_DIR / "thumbs"
