@@ -1,0 +1,8 @@
+.column img,
+.columns img {
+  max-width: 100%;
+}
+
+.container .row {
+  margin-bottom: 1.5rem;
+}

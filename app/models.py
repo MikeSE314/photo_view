@@ -8,6 +8,8 @@ class Picture(models.Model):
     path = models.CharField(max_length=2000)
     small_path = models.CharField(max_length=2000)
     date = models.DateTimeField()
+    width = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
 
     def __str__(self):
         return os.path.basename(self.path)

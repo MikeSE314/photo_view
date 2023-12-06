@@ -1,8 +1,12 @@
-{% load django_bootstrap5 %}
 {% load socialaccount %}
 {% load static %}
 
-{% bootstrap_css %}
+
+<link rel="stylesheet" href="{% static 'normalize.css' %}">
+<link rel="stylesheet" href="{% static 'skeleton.css' %}">
+<link rel="stylesheet" href="{% static 'photoswipe.css' %}">
+<link rel="stylesheet" href="{% static 'style.css' %}">
+
 
 <div class="container">
   <div>
@@ -10,54 +14,27 @@
     <a href="{% url 'admin:index' %}">Admin</a> |
     <a href="{% url 'account_logout' %}">Log out</a>
   </div>
-  <div>
-    <p>heyo</p>
-    <p class="notification">Click an image to reveal the lightbox</p>
-    <section class="image-grid">
-      <div class="container-xxl">
-        <div class="row gy-4">
-          {% for picture in pictures %}
-          <div class="col-12 col-sm-6 col-md-4">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              <!-- <img src="{% static picture.small_path %}" class="rounded mx-auto d-block lazy"> -->
-            </button>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-    </section>
 
-    <a href="{% url 'catalog' %}">Catalog</a>
-  </div>
-
-  <!-- modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            {% for picture in pictures %}
-            <div class="carousel-item active">
-              <!-- <img src="{% static picture.path %}" class="d-block w-100 lazy" alt="..."> -->
-            </div>
-            {% endfor %}
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div>
-      </div>
+  <!-- Gallery -->
+  <div class="pswp-gallery" id="my-gallery">
+    {% for day, pictures in days.items %}
+    <h2>{{ day }}</h2>
+    {% for picture in pictures %}
+    {% if forloop.counter0|divisibleby:4 %}
+    <div class="row">
+    {% endif %}
+      <a href="{% static picture.path %}" data-pswp-width="{{ picture.width }}" data-pswp-height="{{ picture.height }}" target="_blank" class="three columns">
+        <img src="{% static picture.small_path %}" alt="" /></a>
+    {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
     </div>
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
   </div>
+  <!-- End gallery -->
+
+  <a href="{% url 'catalog' %}">Catalog</a>
 </div>
 
-{% bootstrap_javascript %}
+
+<script type="module" src="{% static 'script.js' %}"></script>

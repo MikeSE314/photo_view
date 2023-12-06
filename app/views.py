@@ -1,6 +1,6 @@
-import time
 import os
 import hashlib
+
 from pathlib import Path
 from datetime import datetime
 
@@ -14,10 +14,20 @@ from django.conf import settings
 from .models import Picture
 
 
+EXIF_DATE = 36867
+
+
 @login_required
 def index(req):
     pics = Picture.objects.order_by('-date')
-    return render(req, "app/index.html", {"pictures": pics})
+    days = {}
+    for pic in pics:
+        day = pic.date.strftime('%Y-%m-%d')
+        if day not in days.keys():
+            days[day] = []
+        days[day].append(pic)
+
+    return render(req, "app/index.html", {"days": days})
 
 
 def login(req):
@@ -34,13 +44,13 @@ def catalog(req):
                 if path.suffix.lower() not in ('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'):
                     continue  # not a picture file name
 
-                assert_or_save(path)
+                assert_or_save(path, photo_dir)
 
     # redirect to index
     return redirect('index')
 
 
-def assert_or_save(path):
+def assert_or_save(path, photo_dir):
     # get md5
     h = get_md5_for_filename(path)
     try:
@@ -48,11 +58,13 @@ def assert_or_save(path):
         return  # because we already cataloged it
     except Picture.DoesNotExist:
         pass  # it's new, we'll process outside the try/except
-    
+
     im = Image.open(path)
+    width, height = im.size
 
     # date
-    date = datetime.strptime(im._getexif()[36867], '%Y:%m:%d %H:%M:%S')
+    date = datetime.strptime(
+        im._getexif()[EXIF_DATE], '%Y:%m:%d %H:%M:%S').astimezone()
 
     # thumbnail
     size = 256
@@ -61,10 +73,9 @@ def assert_or_save(path):
     im.save(settings.THUMB_DIR / thumb)
 
     # save
-    Picture.objects.create(checksum=h, path=path.name, small_path=thumb, date=date)
+    Picture.objects.create(checksum=h, path=path.relative_to(
+        photo_dir), small_path=thumb, date=date, width=width, height=height)
 
 
 def get_md5_for_filename(filename):
     return hashlib.md5(open(filename, 'rb').read()).hexdigest()
-
-
