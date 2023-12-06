@@ -1,0 +1,8 @@
+{% load i18n %}
+{% load allauth account socialaccount %}
+{% block content %}
+    {% element h1 %}
+        {% trans "Sign In" %}
+    {% endelement %}
+    {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+{% endblock content %}
