@@ -1,4 +1,3 @@
-{% load socialaccount %}
 {% load static %}
 
 
@@ -7,30 +6,33 @@
 <link rel="stylesheet" href="{% static 'photoswipe.css' %}">
 <link rel="stylesheet" href="{% static 'style.css' %}">
 
-
+<div class="sidebar">
+  <div class="container">Hey</div>
+</div>
 <div class="container">
   <div>
     Hey {{ user.username }}!
     {% if user.is_staff %}
     <a href="{% url 'admin:index' %}">Admin</a> |
     {% endif %}
-    <a href="{% url 'account_logout' %}">Log out</a>
   </div>
 
   <!-- Gallery -->
   <div class="pswp-gallery" id="my-gallery">
-    {% for day, pictures in days.items %}
+
     <h2>{{ day }}</h2>
     {% for picture in pictures %}
     {% if forloop.counter0|divisibleby:4 %}
     <div class="row">
     {% endif %}
-      <a href="{% static picture.path %}" data-pswp-width="{{ picture.width }}" data-pswp-height="{{ picture.height }}" target="_blank" class="three columns">
+      <div class="three columns">
+      <p>{{ picture.date }}</p>
+        <a href="{% static picture.path %}" data-pswp-width="{{ picture.width }}" data-pswp-height="{{ picture.height }}" target="_blank" class="">
         <img src="{% static picture.small_path %}" alt="" /></a>
+      </div>
     {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
     </div>
     {% endif %}
-    {% endfor %}
     {% endfor %}
   </div>
   <!-- End gallery -->

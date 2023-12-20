@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'gracious-heisenberg.local',
     '10.1.159.52',
+    'photo-view.me',
 ]
 
 
@@ -43,11 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',  # for allauth
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    # 'django.contrib.sites',  # for allauth
+    # 'allauth',
+    # 'allauth.account',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.google',
     'app.apps.AppConfig',  # my app
     'sslserver',  # https
 ]
@@ -60,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    # 'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'photo_view.urls'
@@ -133,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Denver'
 
 USE_I18N = True
 
@@ -151,7 +152,8 @@ PHOTO_DIRS = [
     Path('/mnt/V/photoprism/originals/'),
 ]
 
-THUMB_DIR = BASE_DIR / "thumbs"
+# THUMB_DIR = BASE_DIR / "thumbs"
+THUMB_DIR = Path("/mnt/V/photoprism/thumbs/")
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -170,11 +172,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Added for authentication
 
 AUTHENTICATION_BACKENDS = [
-    # 'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    # 'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
-SITE_ID = 1
+SITE_ID = 2
 LOGIN_REDIRECT_URL = '/'
 SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_LOGOUT_ON_GET = True

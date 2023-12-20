@@ -1,8 +1,9 @@
 import os
 import hashlib
+import threading
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 from PIL import Image
 
@@ -23,15 +24,36 @@ def is_member(user):
 @login_required
 @user_passes_test(is_member, login_url='/forbidden', redirect_field_name=None)
 def index(req):
-    pics = Picture.objects.order_by('-date')
-    days = {}
-    for pic in pics:
-        day = pic.date.strftime('%Y-%m-%d')
-        if day not in days.keys():
-            days[day] = []
-        days[day].append(pic)
+    get_date = req.GET.get('date', None)
+    if get_date is None:
+        first_pic = Picture.objects.order_by('-date').first()
+        if first_pic is None:
+            return render(req, "app/index.html", {
+                            "pictures": (),
+                            "day": "No pictures in database",
+                         })
+        requested_date = first_pic.date.date()
+    else:
+        requested_date = date.fromisoformat(get_date)
+    pics = Picture.objects.filter(
+            date__year=requested_date.year,
+            date__month=requested_date.month,
+            date__day=requested_date.day).order_by('-date')
 
-    return render(req, "app/index.html", {"days": days})
+    days = list(datetime.astimezone().date() for datetime in Picture.objects.values_list('date', flat=True).distinct().order_by('-date'))
+    print(days)
+    print(days[0].isoformat())
+    # prev_day = Picture.objects.values_list('date', flat=True).distinct().filter(date__gt=requested_date).order_by('date').first()
+    # print(f'next day: {next_day}')
+    # print(f'next day: {next_day}')
+
+    return render(req, "app/index.html", {
+        "pictures": pics,
+        "day": requested_date,
+        # "next_day": next_day,
+        # "prev_day": prev_day
+        })
+    # return render(req, "app/index.html", {"days": days})
 
 
 def forbidden(req):
@@ -45,7 +67,12 @@ def login(req):
 @login_required
 @user_passes_test(is_member, login_url='/forbidden', redirect_field_name=None)
 def catalog(req):
+
+    return render('index')
+
+def do_catalog_work():
     # do stuff
+    running.acquire(blocking=True)
     for photo_dir in settings.PHOTO_DIRS:
         for (root, dirs, files) in os.walk(photo_dir):
             for filename in files:
@@ -61,6 +88,11 @@ def catalog(req):
 
 def assert_or_save(path, photo_dir):
     # get md5
+    try:
+        Picture.objects.get(path=path.relative_to(photo_dir))
+        return
+    except Picture.DoesNotExist:
+        pass
     h = get_md5_for_filename(path)
     try:
         Picture.objects.get(checksum=h)

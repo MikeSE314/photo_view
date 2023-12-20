@@ -13,3 +13,5 @@ class Picture(models.Model):
 
     def __str__(self):
         return os.path.basename(self.path)
+
+# class Album(models.Model):

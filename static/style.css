@@ -6,3 +6,14 @@
 .container .row {
   margin-bottom: 1.5rem;
 }
+
+.sidebar {
+  width: 150px;
+  height: 100%;
+  background-color: aqua;
+  position: fixed;
+}
+
+.sidebar + * {
+  /* margin-left: 150px; */
+}
