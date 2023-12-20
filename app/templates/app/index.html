@@ -7,7 +7,17 @@
 <link rel="stylesheet" href="{% static 'style.css' %}">
 
 <div class="sidebar">
-  <div class="container">Hey</div>
+  <div class="container">
+    {% for day in days %}
+    <div>
+      {% if day == requested_date %}
+      <b>{{ day }}</b>
+      {% else %}
+      <a href="{% url 'index' %}?date={{ day|date:'Y-m-d' }}">{{ day }}</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
 </div>
 <div class="container">
   <div>
@@ -20,7 +30,7 @@
   <!-- Gallery -->
   <div class="pswp-gallery" id="my-gallery">
 
-    <h2>{{ day }}</h2>
+    <h2>{{ requested_date }}</h2>
     {% for picture in pictures %}
     {% if forloop.counter0|divisibleby:4 %}
     <div class="row">

@@ -1,20 +1,22 @@
-import os
 import hashlib
-import threading
+import os
 
-from pathlib import Path
 from datetime import datetime, date, timedelta
+from pathlib import Path
+from threading import Thread
 
 from PIL import Image
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import render, redirect
 
 from .models import Picture
 
 
 EXIF_DATE = 36867
+
+running = False
 
 
 def is_member(user):
@@ -40,16 +42,12 @@ def index(req):
             date__month=requested_date.month,
             date__day=requested_date.day).order_by('-date')
 
-    days = list(datetime.astimezone().date() for datetime in Picture.objects.values_list('date', flat=True).distinct().order_by('-date'))
-    print(days)
-    print(days[0].isoformat())
-    # prev_day = Picture.objects.values_list('date', flat=True).distinct().filter(date__gt=requested_date).order_by('date').first()
-    # print(f'next day: {next_day}')
-    # print(f'next day: {next_day}')
+    days = sorted(set(datetime.astimezone().date() for datetime in Picture.objects.values_list('date', flat=True).distinct().order_by('-date')))[::-1]
 
     return render(req, "app/index.html", {
         "pictures": pics,
-        "day": requested_date,
+        "requested_date": requested_date,
+        "days": days,
         # "next_day": next_day,
         # "prev_day": prev_day
         })
@@ -67,12 +65,16 @@ def login(req):
 @login_required
 @user_passes_test(is_member, login_url='/forbidden', redirect_field_name=None)
 def catalog(req):
-
-    return render('index')
+    global running
+    if not running:
+        running = True
+        t = Thread(target=do_catalog_work)
+        t.start()
+    return redirect('index')
 
 def do_catalog_work():
+    global running
     # do stuff
-    running.acquire(blocking=True)
     for photo_dir in settings.PHOTO_DIRS:
         for (root, dirs, files) in os.walk(photo_dir):
             for filename in files:
@@ -81,13 +83,12 @@ def do_catalog_work():
                     continue  # not a picture file name
 
                 assert_or_save(path, photo_dir)
-
-    # redirect to index
-    return redirect('index')
+    running = False
 
 
 def assert_or_save(path, photo_dir):
     # get md5
+    name = path.relative_to(photo_dir)
     try:
         Picture.objects.get(path=path.relative_to(photo_dir))
         return
