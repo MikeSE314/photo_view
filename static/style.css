@@ -11,6 +11,7 @@
   width: 150px;
   height: 100%;
   position: fixed;
+  overflow-y: scroll;
 }
 
 .sidebar + * {
