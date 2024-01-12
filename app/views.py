@@ -15,6 +15,7 @@ from .models import Picture
 
 
 EXIF_DATE = 36867
+EXIF_ORIENTATION = 274
 
 running = False
 
@@ -40,7 +41,7 @@ def index(req):
     pics = Picture.objects.filter(
             date__year=requested_date.year,
             date__month=requested_date.month,
-            date__day=requested_date.day).order_by('-date')
+            date__day=requested_date.day).order_by('date')
 
     days = sorted(set(datetime.astimezone().date() for datetime in Picture.objects.values_list('date', flat=True).distinct().order_by('-date')))[::-1]
 
@@ -102,11 +103,23 @@ def assert_or_save(path, photo_dir):
         pass  # it's new, we'll process outside the try/except
 
     im = Image.open(path)
+    exif = im._getexif()
+
+    #rotation
+
+    if exif[EXIF_ORIENTATION] == 3:
+        im=im.rotate(180, expand=True)
+    elif exif[EXIF_ORIENTATION] == 6:
+        im=im.rotate(270, expand=True)
+    elif exif[EXIF_ORIENTATION] == 8:
+        im=im.rotate(90, expand=True)
+    
     width, height = im.size
 
     # date
     date = datetime.strptime(
-        im._getexif()[EXIF_DATE], '%Y:%m:%d %H:%M:%S').astimezone()
+        exif[EXIF_DATE], '%Y:%m:%d %H:%M:%S').astimezone()
+
 
     # thumbnail
     size = 256

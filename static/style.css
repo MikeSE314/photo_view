@@ -1,19 +1,35 @@
-.column img,
-.columns img {
-  max-width: 100%;
+:root {
+  --sidebar-width: 141px;
 }
 
-.container .row {
-  margin-bottom: 1.5rem;
+.sidebar-parent {
+  padding-left: var(--sidebar-width);
+}
+
+.pure-menu-item {
+  height: auto;
+}
+
+.picture-title {
+  margin-bottom: 0;
+}
+
+.image-box {
+  display: flex;
+  justify-content: center;
+}
+
+.me-im-itself {
+  width: 100%;
+  border-radius: 5px;
 }
 
 .sidebar {
-  width: 150px;
-  height: 100%;
+  left: var(--sidebar-width);
+  width: var(--sidebar-width);
+  margin-left: calc(-1 * var(--sidebar-width));
   position: fixed;
-  overflow-y: scroll;
-}
-
-.sidebar + * {
-  /* margin-left: 150px; */
+  bottom: 0;
+  top: 0;
+  overflow-y: auto;
 }

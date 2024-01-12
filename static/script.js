@@ -4,7 +4,8 @@ import PhotoSwipe from '/static/photoswipe.esm.js';
 const lightbox = new PhotoSwipeLightbox({
   gallery: '#my-gallery',
   children: 'a',
-  pswpModule: PhotoSwipe
+  pswpModule: PhotoSwipe,
+  loop: false,
 });
 
 lightbox.init();

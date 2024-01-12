@@ -1,51 +1,55 @@
 {% load static %}
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" href="{% static 'normalize.css' %}">
-<link rel="stylesheet" href="{% static 'skeleton.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
 <link rel="stylesheet" href="{% static 'photoswipe.css' %}">
 <link rel="stylesheet" href="{% static 'style.css' %}">
 
-<div class="sidebar">
-  <div class="container">
-    {% for day in days %}
+<div class="sidebar-parent">
+  <aside class="sidebar">
+    <div class="uk-padding-small">
+      <ul class="uk-list">
+        {% for day in days %}
+        <li>
+          {% if day == requested_date %}
+          <a href="#">{{ day }}</a>
+          {% else %}
+          <a href="{% url 'index' %}?date={{ day|date:'Y-m-d' }}">{{ day }}</a>
+          {% endif %}
+          {% endfor %}
+        </li>
+      </ul>
+    </div>
+  </aside>
+  <div class="uk-margin-left uk-margin-right">
     <div>
-      {% if day == requested_date %}
-      <b>{{ day }}</b>
-      {% else %}
-      <a href="{% url 'index' %}?date={{ day|date:'Y-m-d' }}">{{ day }}</a>
+      Hey {{ user.username }}!
+      {% if user.is_staff %}
+      <a href="{% url 'admin:index' %}">Admin</a> |
+      <a href="{% url 'logout' %}">Log out</a>
       {% endif %}
     </div>
-    {% endfor %}
-  </div>
-</div>
-<div class="container">
-  <div>
-    Hey {{ user.username }}!
-    {% if user.is_staff %}
-    <a href="{% url 'admin:index' %}">Admin</a> |
-    {% endif %}
-  </div>
 
-  <!-- Gallery -->
-  <div class="pswp-gallery" id="my-gallery">
+    <!-- Gallery -->
+    <div class="pswp-gallery" id="my-gallery">
 
-    <h2>{{ requested_date }}</h2>
-    {% for picture in pictures %}
-    {% if forloop.counter0|divisibleby:4 %}
-    <div class="row">
-    {% endif %}
-      <div class="three columns">
-      <p>{{ picture.date }}</p>
-        <a href="{% static picture.path %}" data-pswp-width="{{ picture.width }}" data-pswp-height="{{ picture.height }}" target="_blank" class="">
-        <img src="{% static picture.small_path %}" alt="" /></a>
+      <h2>{{ requested_date }}</h2>
+      <div class="uk-flex uk-flex-wrap">
+        {% for picture in pictures %}
+        <div class="uk-card uk-card-body uk-margin-top">
+          <h3 class="uk-card-title">{{ picture.date }}</h3>
+          <div><a href="{% static picture.path %}" data-pswp-width="{{ picture.width }}"
+              data-pswp-height="{{ picture.height }}" target="_blank">
+              <img class="me-im-itself" src="{% static picture.small_path %}" alt="" /></a>
+          </div>
+        </div>
+        {% endfor %}
       </div>
-    {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
     </div>
-    {% endif %}
-    {% endfor %}
+    <!-- End gallery -->
   </div>
-  <!-- End gallery -->
 
   <a href="{% url 'catalog' %}">Catalog</a>
 </div>
