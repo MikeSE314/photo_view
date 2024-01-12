@@ -22,7 +22,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p3ioe@^)i1nho9$bhd8exu2^pf2c!^dc#53%54mood!yhj%s-k'
+with open('/etc/secret_key.txt') as f:
+    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,6 +34,13 @@ ALLOWED_HOSTS = [
     '10.1.159.52',
     'photo-view.me',
 ]
+
+SECURE_HSTS_SECONDS = 60 * 60 * 24 * 365 * 2
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 
 # Application definition
@@ -150,6 +158,7 @@ STATIC_URL = 'static/'
 PHOTO_DIRS = [
     # Path(os.path.expanduser('~/Downloads/Photos-001')),
     Path('/mnt/V/photoprism/originals/'),
+    Path('/mnt/V/photoprism/import/'),
 ]
 
 # THUMB_DIR = BASE_DIR / "thumbs"
