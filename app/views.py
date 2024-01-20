@@ -68,14 +68,18 @@ def login(req):
 def catalog(req):
     global running
     if not running:
+        print('CATALOG: starting catalog work')
         running = True
         t = Thread(target=do_catalog_work)
         t.start()
+    else:
+        print('CATALOG: catalog already running, not starting.')
     return redirect('index')
 
 def do_catalog_work():
     global running
     # do stuff
+    print('CATALOG: doing catalog work')
     for photo_dir in settings.PHOTO_DIRS:
         for (root, dirs, files) in os.walk(photo_dir):
             for filename in files:
@@ -84,6 +88,7 @@ def do_catalog_work():
                     continue  # not a picture file name
 
                 assert_or_save(path, photo_dir)
+    print('CATALOG: catalog work done')
     running = False
 
 
