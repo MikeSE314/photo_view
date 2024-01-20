@@ -35,7 +35,7 @@ def index(req):
                             "pictures": (),
                             "day": "No pictures in database",
                          })
-        requested_date = first_pic.date.date()
+        requested_date = first_pic.date.astimezone().date()
     else:
         requested_date = date.fromisoformat(get_date)
     pics = Picture.objects.filter(
