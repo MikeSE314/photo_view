@@ -1,0 +1,60 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" href="{% static 'normalize.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="{% static 'photoswipe.css' %}">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <title>{% block title %}Photo View{% endblock %}</title>
+</head>
+
+<body>
+
+
+  <nav uk-navbar class="uk-navbar-container">
+    <div class="uk-navbar-left">
+      <div class="uk-container">
+        {% block nav %}
+        <ul class="uk-navbar-nav">
+          <li>
+          <a uk-icon="icon: menu" href="#sidebar" uk-toggle></a>
+          </li>
+          <li><a href="#">{{ user.username }}</a></li>
+          {% if user.is_staff %}
+          <li><a href="{% url 'admin:index' %}">Admin</a></li>
+          {% endif %}
+          <li><a href="{% url 'logout' %}">Log out</a></li>
+        </ul>
+        {% endblock %}
+      </div>
+    </div>
+  </nav>
+
+
+  <div id="sidebar" uk-offcanvas>
+    <div class="uk-offcanvas-bar">
+      <button class="uk-offcanvas-close" type="button" uk-close></button>
+      {% block sidebar %}
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+      {% endblock %}
+    </div>
+  </div>
+
+  <div id="content" class="uk-container">
+    {% block content %}{% endblock %}
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+</body>
+
+</html>
